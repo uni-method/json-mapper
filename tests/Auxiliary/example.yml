@@ -1,0 +1,87 @@
+entities:
+  complex:
+    class: 'Tests\Auxiliary\Complex'
+    description: 'Complex object'
+    attributes:
+      id:
+        description: 'Use one attribute instead of id'
+        getter: 'one'
+        setter: 'one'
+        type: integer
+      two:
+        description: 'Just two'
+        getter: 'getTwo'
+        setter: 'setTwo'
+        type: string
+    relationships:
+      dummyAttr:
+        description: 'Relation'
+        getter: 'getDummy'
+        setter: 'setDummy'
+        type: dummy
+
+  dummy:
+    class: 'Tests\Auxiliary\Dummy'
+    description: 'Dummy object'
+    postLoad:
+      - Tests\Auxiliary\DoubleAttributeHandler
+    attributes:
+      id:
+        description: 'Use one attribute instead of id'
+        getter: 'one'
+        setter: 'one'
+        type: integer
+      two:
+        description: 'Use method'
+        getter: 'getTwo()'
+        setter: 'setTwo()'
+        type: string
+
+  a:
+    class: 'Tests\Auxiliary\A'
+    description: 'Parent object'
+    attributes:
+      id:
+        getter: 'id'
+        setter: 'id'
+        type: string
+      desc:
+        getter: 'desc'
+        setter: 'desc'
+        type: string
+    relationships:
+      bS:
+        getter: 'b_s'
+        setter: 'b_s'
+        type: b
+
+  b:
+    class: 'Tests\Auxiliary\B'
+    description: 'Middle object'
+    attributes:
+      id:
+        getter: 'id'
+        setter: 'id'
+        type: string
+      title:
+        getter: 'title'
+        setter: 'title'
+        type: string
+    relationships:
+      c:
+        getter: 'c'
+        setter: 'c'
+        type: c
+
+  c:
+    class: 'Tests\Auxiliary\C'
+    description: 'Child object'
+    attributes:
+      id:
+        getter: 'id'
+        setter: 'id'
+        type: string
+      count:
+        getter: 'count'
+        setter: 'count'
+        type: integer
