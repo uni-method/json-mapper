@@ -60,4 +60,31 @@ class SerializeTest extends TestCase
             '{"data":{"type":"a","id":"123","attributes":{"desc":"such wow"},"relationships":{"bS":{"data":[{"type":"b","id":"1"},{"type":"b","id":"2"}]}}},"included":[{"type":"b","id":"1","attributes":{"title":"wow1"},"relationships":{"c":{"data":{"type":"c","id":"11"}}}},{"type":"c","id":"11","attributes":{"count":3},"relationships":[]},{"type":"b","id":"2","attributes":{"title":"wow2"},"relationships":{"c":{"data":{"type":"c","id":"21"}}}},{"type":"c","id":"21","attributes":{"count":3},"relationships":[]}]}'
         );
     }
+
+    public function testCollection(): void
+    {
+        $entity = (new EntityConfig())
+            ->setClass(Dummy::class)
+            ->setAlias('dummy23')
+            ->setDescription('Dummy class for example')
+            ->setAttributes([
+                new AttributeConfig('testOne', 'integer', null, 'one'),
+                new AttributeConfig('id', 'string', null, 'getTwo()'),
+            ])
+        ;
+        $config = new ConfigStore([$entity]);
+        $dummy = new Dummy();
+        $dummy->one = 5;
+        $dummy->setTwo('wow');
+
+        $dummy2 = new Dummy();
+        $dummy2->one = 15;
+        $dummy2->setTwo('woww2');
+
+        $service = new Serializer($config);
+        self::assertEquals(
+            json_encode($service->handleCollection([$dummy, $dummy2]), JSON_THROW_ON_ERROR, 512),
+            '{"data":[{"type":"dummy23","id":"wow","attributes":{"testOne":5},"relationships":[]},{"type":"dummy23","id":"woww2","attributes":{"testOne":15},"relationships":[]}],"included":[]}'
+        );
+    }
 }

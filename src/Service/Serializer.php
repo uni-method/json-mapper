@@ -46,10 +46,11 @@ class Serializer
     /**
      * @param object[] $objects
      * @param string $included
+     * @param mixed[] $meta
      * @return mixed[]
      * @throws ConfigurationException
      */
-    public function handleCollection(array $objects, string $included = ''): array
+    public function handleCollection(array $objects, string $included = '', array $meta = []): array
     {
         $result = [];
         $data = [];
@@ -58,6 +59,9 @@ class Serializer
             $parsedIncluded = $this->parseIncluded($included);
             $data[] = $this->extractData($object, $parsedIncluded);
             $_included[] = $this->getIncluded($object, $parsedIncluded);
+        }
+        if ($meta !== []) {
+            $result['meta'] = $meta;
         }
         $result['data'] = $data;
         $result['included'] = $this->filterIncluded(array_merge(...$_included));
