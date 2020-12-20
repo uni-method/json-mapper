@@ -33,6 +33,24 @@ class ConfigStore
     }
 
     /**
+     * @param string $class
+     * @return EntityConfig
+     * @throws ConfigurationException
+     */
+    public function getEntityConfigByClass(string $class): EntityConfig
+    {
+        $filtered = array_values(
+            array_filter($this->entities, static function (EntityConfig $entity) use ($class) {
+                return $entity->class === $class;
+            })
+        );
+        if (count($filtered) === 1) {
+            return $filtered[0];
+        }
+        throw new ConfigurationException('There are no configuration for this class');
+    }
+
+    /**
      * @param object $object
      * @return EntityConfig
      * @throws ConfigurationException

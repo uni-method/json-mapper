@@ -2,6 +2,8 @@
 
 namespace UniMethod\JsonapiMapper\Config;
 
+use UniMethod\JsonapiMapper\Exception\ConfigurationException;
+
 trait MethodHelper
 {
     /**
@@ -51,5 +53,23 @@ trait MethodHelper
             $object->$prop = $value;
         }
         return $object;
+    }
+
+    /**
+     * @param object $object
+     * @param $value
+     * @return object
+     * @throws ConfigurationException
+     */
+    protected function setId(object $object, $value): object
+    {
+        $hasMethod = method_exists($object, 'setId');
+        if ($hasMethod) {
+            $object->setId($value);
+        } elseif (in_array('id', get_class_vars($object), true)) {
+            $object->id = $value;
+        }
+
+        throw new ConfigurationException('Please provide writeable attribute id');
     }
 }
