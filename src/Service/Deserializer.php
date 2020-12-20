@@ -195,12 +195,24 @@ class Deserializer
      * @param string $class
      * @param string|null $id
      * @return object
+     * @throws ConfigurationException
      */
     protected function getOuterObject(string $class, ?string $id): object
     {
+        $config = $this->configStore->getEntityConfigByClass($class);
+
+        if ($config->type === EntityConfig::TYPE_SYNTHETIC) {
+            $object = new $class;
+            if ($id !== null) {
+                $this->setId($object, $id);
+            }
+            return $object;
+        }
+
         if ($id === null) {
             return new $class;
         }
+
         $object = $this->objectManager->loadByClassAndId($class, $id);
         if ($object === null) {
             $object = new $class;
