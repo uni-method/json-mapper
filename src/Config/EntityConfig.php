@@ -19,7 +19,7 @@ class EntityConfig
      *
      * @var string
      */
-    public string $type;
+    public string $type = self::TYPE_STORE;
 
     public string $alias;
 
