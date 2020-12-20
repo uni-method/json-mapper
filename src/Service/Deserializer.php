@@ -44,10 +44,16 @@ class Deserializer
         if ($method === Method::CREATE) {
             $object = new $class;
         } elseif ($method === Method::UPDATE && !empty($data['data']['id'])) {
-            $object = $this->objectManager->loadByClassAndId($class, $data['data']['id']);
+            if ($objectConfig->type === EntityConfig::TYPE_SYNTHETIC) {
+                $object = new $class;
+            }  else  {
+                $object = $this->objectManager->loadByClassAndId($class, $data['data']['id']);
+            }
+
             if ($object === null) {
                 throw new BrokenInputException('Non valid input data');
             }
+
             $isNew = false;
         } else {
             throw new BrokenInputException('Non valid input data');
