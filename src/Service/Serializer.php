@@ -44,6 +44,18 @@ class Serializer
     }
 
     /**
+     * Check is synthetic model or not
+     *
+     * @param string $alias
+     * @return bool
+     * @throws ConfigurationException
+     */
+    public function isSynthetic(string $alias): bool
+    {
+        return $this->configStore->getEntityConfigByAlias($alias)->type === EntityConfig::TYPE_SYNTHETIC;
+    }
+
+    /**
      * @param object[] $objects
      * @param string $included
      * @param mixed[] $meta
