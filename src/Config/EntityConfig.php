@@ -6,19 +6,30 @@ use UniMethod\JsonapiMapper\External\ObjectHandler;
 
 class EntityConfig
 {
+    public const TYPE_STORE = 'store';
+    public const TYPE_SYNTHETIC = 'synthetic';
+
     public const DEFAULT_PRIMARY_ATTRIBUTE = 'id';
 
     public string $class;
+
+    /**
+     * self::TYPE_STORE - store and read data usually from db
+     * self::TYPE_SYNTHETIC - read and write in runtime
+     *
+     * @var string
+     */
+    public string $type;
 
     public string $alias;
 
     public string $description;
 
-    /** @var \UniMethod\JsonapiMapper\External\ObjectHandler[] */
+    /** @var ObjectHandler[] */
     public array $postLoadHandlers = [];
 
     /**
-     * @var \UniMethod\JsonapiMapper\External\ObjectHandler[]
+     * @var ObjectHandler[]
      */
     public array $preCreateHandlers = [];
 
@@ -69,7 +80,7 @@ class EntityConfig
     }
 
     /**
-     * @param \UniMethod\JsonapiMapper\External\ObjectHandler[] $preCreateHandlers
+     * @param ObjectHandler[] $preCreateHandlers
      * @return EntityConfig
      */
     public function setPreCreateHandlers(array $preCreateHandlers): self
@@ -166,7 +177,7 @@ class EntityConfig
     }
 
     /**
-     * @return \UniMethod\JsonapiMapper\External\ObjectHandler[]
+     * @return ObjectHandler[]
      */
     public function getPostLoadHandlers(): array
     {
