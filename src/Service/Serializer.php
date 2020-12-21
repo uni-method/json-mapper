@@ -193,6 +193,9 @@ class Serializer
         $result = [];
         foreach ($config->getRelationshipsWithGetters($relations) as $relationshipConfig) {
             $relation = $this->getValue($obj, $relationshipConfig->getter);
+            if ($relation === null) {
+                continue;
+            }
             if ($relation instanceof IteratorAggregate) {
                 foreach ($relation->getIterator() as $item) {
                     $result[$relationshipConfig->name]['data'][] = $this->extractTypeAndId($item, $this->configStore->getEntityConfigByObject($item));
@@ -221,7 +224,9 @@ class Serializer
         $config = $this->configStore->getEntityConfigByObject($obj);
         foreach ($config->getRelationshipsWithGetters(array_keys($included)) as $relationshipConfig) {
             $relation = $this->getValue($obj, $relationshipConfig->getter);
-
+            if ($relation === null) {
+                continue;
+            }
             if ($relation instanceof IteratorAggregate) {
                 foreach ($relation->getIterator() as $item) {
                     $result[] = $this->extractData($item, $included[$relationshipConfig->name]);
