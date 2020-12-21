@@ -1,4 +1,4 @@
-#Simple json mapper
+# Simple json mapper
 
 Represent your model in array by config.
 
