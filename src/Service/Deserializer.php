@@ -74,7 +74,7 @@ class Deserializer
         $object = $this->setAttributes($object, $objectConfig, $data['data'] ?? []);
         $object = $this->fillRelationships($object, $objectConfig, $included, $data['data'], $data['included'] ?? []);
         if ($isNew) {
-            $object = $this->applyPreCreate($object, $objectConfig);
+            $object = $this->applyPreCreate($object, $objectConfig, $included);
         }
         return $object;
     }
@@ -82,12 +82,13 @@ class Deserializer
     /**
      * @param object $entity
      * @param EntityConfig $config
+     * @param array $included
      * @return object
      */
-    protected function applyPreCreate(object $entity, EntityConfig $config): object
+    protected function applyPreCreate(object $entity, EntityConfig $config, array $included): object
     {
         foreach ($config->getPreCreateHandlers() as $handler) {
-            $handler->processObject($entity);
+            $handler->processObject($entity, $included);
         }
         return $entity;
     }
