@@ -11,8 +11,9 @@ class DoubleAttributeHandler implements ObjectHandler
 {
     /**
      * @param object|Dummy $object
+     * @param array $included
      */
-    public function processObject(object $object): void
+    public function processObject(object $object, array $included = []): void
     {
         $object->setTwo($object->getTwo() . $object->getTwo());
     }

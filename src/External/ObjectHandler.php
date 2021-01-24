@@ -4,5 +4,5 @@ namespace UniMethod\JsonapiMapper\External;
 
 interface ObjectHandler
 {
-    public function processObject(object $object): void;
+    public function processObject(object $object, array $included = []): void;
 }

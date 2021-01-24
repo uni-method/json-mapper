@@ -89,7 +89,7 @@ class Serializer
     protected function extractData(object $entity, array $included = []): array
     {
         $config = $this->configStore->getEntityConfigByObject($entity);
-        $entity = $this->applyPostLoad($entity, $config);
+        $entity = $this->applyPostLoad($entity, $config, $included);
 
         return array_merge($this->extractTypeAndId($entity, $config), [
             'attributes' => $this->getAttributes($entity, $config),
@@ -100,12 +100,13 @@ class Serializer
     /**
      * @param object $entity
      * @param EntityConfig $config
+     * @param array $included
      * @return object
      */
-    protected function applyPostLoad(object $entity, EntityConfig $config): object
+    protected function applyPostLoad(object $entity, EntityConfig $config, array $included): object
     {
         foreach ($config->getPostLoadHandlers() as $handler) {
-            $handler->processObject($entity);
+            $handler->processObject($entity, $included);
         }
         return $entity;
     }
