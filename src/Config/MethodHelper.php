@@ -66,8 +66,12 @@ trait MethodHelper
         $hasMethod = method_exists($object, 'setId');
         if ($hasMethod) {
             $object->setId($value);
-        } elseif (in_array('id', get_class_vars($object), true)) {
+            return $object;
+        }
+
+        if (in_array('id', get_class_vars($object), true)) {
             $object->id = $value;
+            return $object;
         }
 
         throw new ConfigurationException('Please provide writeable attribute id');
