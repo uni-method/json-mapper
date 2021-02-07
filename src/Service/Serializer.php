@@ -11,6 +11,7 @@ use UniMethod\JsonapiMapper\Config\Scalar;
 use UniMethod\JsonapiMapper\Exception\ConfigurationException;
 use DateTime;
 use IteratorAggregate;
+use UniMethod\JsonapiMapper\External\Error;
 
 class Serializer
 {
@@ -81,6 +82,22 @@ class Serializer
     }
 
     /**
+     * Output errors
+     *
+     * @param Error[] $errors
+     * @return mixed[]
+     */
+    public function handleErrors(array $errors): array
+    {
+        return ['errors' => array_map(static fn(Error $error) => [
+            'status' => $error->getStatus(),
+            'source' => ['pointer' => $error->getPointer()],
+            'title' => $error->getTitle(),
+            'detail' => $error->getDetail(),
+        ], $errors)];
+    }
+
+    /**
      * @param object $entity
      * @param mixed[] $included
      * @return mixed[]
@@ -142,7 +159,7 @@ class Serializer
     }
 
     /**
-     * Выгружаем аттрибуты согласно конфигу
+     * Output attributes according to the config
      *
      * @param object $obj
      * @param EntityConfig $config
@@ -180,7 +197,7 @@ class Serializer
     }
 
     /**
-     * Выгружаем связи согласно конфигу
+     * Output relations according to the config
      *
      * @param object $obj
      * @param EntityConfig $config
