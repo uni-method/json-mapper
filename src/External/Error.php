@@ -4,12 +4,12 @@ namespace UniMethod\JsonapiMapper\External;
 
 final class Error
 {
-    protected int $status;
+    protected string $status;
     protected ?string $pointer = null;
-    protected string $title;
+    protected ?string $title;
     protected string $detail;
 
-    public function __construct(int $status, string $title, string $detail, ?string $pointer)
+    public function __construct(string $status, string $detail, ?string $title, ?string $pointer)
     {
         $this->status = $status;
         $this->title = $title;
@@ -18,9 +18,9 @@ final class Error
     }
 
     /**
-     * @return int
+     * @return string
      */
-    public function getStatus(): int
+    public function getStatus(): string
     {
         return $this->status;
     }
@@ -36,7 +36,7 @@ final class Error
     /**
      * @return string
      */
-    public function getTitle(): string
+    public function getTitle(): ?string
     {
         return $this->title;
     }
