@@ -67,4 +67,12 @@ class ConfigStore
         }
         throw new ConfigurationException('There are no configuration for this object');
     }
+
+    /**
+     * @return EntityConfig[]
+     */
+    public function getEntities(): array
+    {
+        return $this->entities;
+    }
 }

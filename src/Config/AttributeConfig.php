@@ -8,12 +8,14 @@ class AttributeConfig
     public string $type;
     public ?string $setter;
     public ?string $getter;
+    public ?string $description;
 
-    public function __construct(string $name, string $type, ?string $setter, ?string $getter)
+    public function __construct(string $name, string $type, ?string $setter, ?string $getter, ?string $description = null)
     {
         $this->name = $name;
         $this->type = $type;
         $this->setter = $setter;
         $this->getter = $getter;
+        $this->description = $description;
     }
 }
