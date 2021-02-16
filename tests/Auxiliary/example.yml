@@ -54,6 +54,10 @@ entities:
         getter: 'b_s'
         setter: 'b_s'
         type: b
+      d:
+        getter: 'd'
+        setter: 'd'
+        type: d
 
   b:
     class: 'Tests\Auxiliary\B'
@@ -85,3 +89,12 @@ entities:
         getter: 'count'
         setter: 'count'
         type: integer
+
+  d:
+    class: 'Tests\Auxiliary\D'
+    description: 'Child object'
+    attributes:
+      id:
+        getter: 'id'
+        setter: 'id'
+        type: string
