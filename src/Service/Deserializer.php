@@ -141,15 +141,23 @@ class Deserializer
         if (!empty($data)) {
             $keys = array_keys($links);
             foreach ($config->getRelationshipsWithSetters($keys) as $relationship) {
-                $relationLink = $data['relationships'][$relationship->name]['data'];
-                if ($this->isAssoc($relationLink)) {
-                     $value = $this->getInnerObject($relationLink, $links[$relationship->name], $included);
+                $dataForRelationExist = !empty($data['relationships'][$relationship->name]);
+
+                if (!$dataForRelationExist) {
+                    continue;
+                }
+
+                $relation = $data['relationships'][$relationship->name]['data'];
+
+                if ($this->isSingle($relation)) {
+                    $value = $this->getInnerObject($relation, $links[$relationship->name], $included);
                 } else {
                     $value = [];
-                    foreach ($relationLink as $localLink) {
+                    foreach ($relation as $localLink) {
                         $value[] = $this->getInnerObject($localLink, $links[$relationship->name], $included);
                     }
                 }
+
                 $object = $this->setValue($object, $relationship->setter, $value);
             }
         }
@@ -181,6 +189,11 @@ class Deserializer
     protected function getInnerObject(array $relationLink, array $links, array $included): object
     {
         $internalData = $this->filterIncluded($included, $relationLink['type'], $relationLink['id'])[0] ?? [];
+
+        if ($internalData === []) {
+            $internalData = $relationLink;
+        }
+
         $config = $this->configStore->getEntityConfigByAlias($relationLink['type']);
         $internalObject = $this->setAttributes(
             $this->getOuterObject($config->class, $relationLink['id']),
@@ -221,7 +234,7 @@ class Deserializer
         return $object;
     }
 
-    protected function isAssoc(array $array): bool {
+    protected function isSingle(array $array): bool {
         return count(array_filter(array_keys($array), 'is_string')) > 0;
     }
 }

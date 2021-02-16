@@ -2,6 +2,7 @@
 
 namespace Tests\Service;
 
+use Tests\Auxiliary\A;
 use UniMethod\JsonapiMapper\Config\AttributeConfig;
 use UniMethod\JsonapiMapper\Config\ConfigStore;
 use UniMethod\JsonapiMapper\Config\EntityConfig;
@@ -16,6 +17,18 @@ use Tests\Auxiliary\Dummy;
 
 class DeserializeTest extends TestCase
 {
+    /** @var MockObject|ContainerManagerInterface $containerManager */
+    protected $containerManager;
+
+    /** @var MockObject|ObjectManagerInterface $objectManager */
+    protected $objectManager;
+
+    protected function setUp(): void
+    {
+        $this->containerManager = $this->createMock(ContainerManagerInterface::class);
+        $this->objectManager = $this->createMock(ObjectManagerInterface::class);
+    }
+
     public function testAttributes(): void
     {
         $attr1 = 1400;
@@ -29,9 +42,7 @@ class DeserializeTest extends TestCase
             ])
         ;
         $config = new ConfigStore([$entity]);
-        /** @var MockObject|ObjectManagerInterface $objectManager */
-        $objectManager = $this->createMock(ObjectManagerInterface::class);
-        $deserialize = new Deserializer($config, $objectManager);
+        $deserialize = new Deserializer($config, $this->objectManager);
         $json = '{"data": {"id": "new", "type": "dummy", "attributes": {"testOne": ' . $attr1 . ', "id": "wow"}}}';
         /** @var Dummy $object */
         $object = $deserialize->handle(
@@ -48,21 +59,61 @@ class DeserializeTest extends TestCase
 
     public function testNestedObjects(): void
     {
-        /** @var MockObject|ContainerManagerInterface $containerManager */
-        $containerManager = $this->createMock(ContainerManagerInterface::class);
-        /** @var MockObject|ObjectManagerInterface $objectManager */
-        $objectManager = $this->createMock(ObjectManagerInterface::class);
-
-        $loader = new YamlLoader($containerManager);
+        $loader = new YamlLoader($this->containerManager);
         $config = $loader->load('tests/Auxiliary/example.yml');
-        $deserialize = new Deserializer($config, $objectManager);
+        $deserialize = new Deserializer($config, $this->objectManager);
 
-        $json = '{"data":{"type":"a","id":"123","attributes":{"desc":"such wow"},"relationships":{"bS":{"data":[{"type":"b","id":"1"},{"type":"b","id":"2"}]}}},"included":[{"type":"b","id":"1","attributes":{"title":"wow1"},"relationships":{"c":{"data":{"type":"c","id":"11"}}}},{"type":"c","id":"11","attributes":{"count":3},"relationships":[]},{"type":"b","id":"2","attributes":{"title":"wow2"},"relationships":{"c":{"data":{"type":"c","id":"21"}}}},{"type":"c","id":"21","attributes":{"count":3},"relationships":[]}]}';
+        $json = $this->getJsonIncluded();
         $object = $deserialize->handle(
             json_decode($json, true, 512, JSON_THROW_ON_ERROR),
             Method::CREATE,
             'bS.c'
         );
         self::assertIsObject($object);
+        self::assertEquals(3, $object->b_s[0]->c->count);
+    }
+
+    public function testNestedInnerObjects(): void
+    {
+        $loader = new YamlLoader($this->containerManager);
+        $config = $loader->load('tests/Auxiliary/example.yml');
+        $deserialize = new Deserializer($config, $this->objectManager);
+
+        $json = $this->getJsonInner();
+        /** @var A $object */
+        $object = $deserialize->handle(
+            json_decode($json, true, 512, JSON_THROW_ON_ERROR),
+            Method::CREATE,
+            'bS.c'
+        );
+        self::assertIsObject($object);
+        self::assertEquals(3, $object->b_s[0]->c->count);
+        self::assertEquals("wow2", $object->b_s[1]->title);
+    }
+
+    public function testNotFilledRelation(): void
+    {
+        $loader = new YamlLoader($this->containerManager);
+        $config = $loader->load('tests/Auxiliary/example.yml');
+        $deserialize = new Deserializer($config, $this->objectManager);
+
+        $json = $this->getJsonIncluded();
+        $object = $deserialize->handle(
+            json_decode($json, true, 512, JSON_THROW_ON_ERROR),
+            Method::CREATE,
+            'bS.c,d'
+        );
+        self::assertIsObject($object);
+        self::assertEquals(3, $object->b_s[0]->c->count);
+    }
+
+    protected function getJsonIncluded(): string
+    {
+        return file_get_contents(dirname(__DIR__) . '/Auxiliary/body_included.json');
+    }
+
+    protected function getJsonInner(): string
+    {
+        return file_get_contents(dirname(__DIR__) . '/Auxiliary/body_inner.json');
     }
 }
