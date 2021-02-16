@@ -11,6 +11,9 @@ use UniMethod\JsonapiMapper\External\ConfigLoaderInterface;
 use UniMethod\JsonapiMapper\External\ContainerManagerInterface;
 use Symfony\Component\Yaml\Yaml;
 
+/**
+ * @deprecated only for tests
+ */
 class YamlLoader implements ConfigLoaderInterface
 {
     /** @var ContainerManagerInterface */
