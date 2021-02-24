@@ -67,7 +67,7 @@ trait MethodHelper
             $object->setId($value);
         }
 
-        if (in_array('id', get_class_vars($object), true)) {
+        if (in_array('id', get_object_vars($object), true)) {
             $object->id = $value;
         }
     }
