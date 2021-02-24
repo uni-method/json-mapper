@@ -58,22 +58,17 @@ trait MethodHelper
     /**
      * @param object $object
      * @param $value
-     * @return object
-     * @throws ConfigurationException
+     * @return void
      */
-    protected function setId(object $object, $value): object
+    protected function setId(object $object, $value): void
     {
         $hasMethod = method_exists($object, 'setId');
         if ($hasMethod) {
             $object->setId($value);
-            return $object;
         }
 
         if (in_array('id', get_class_vars($object), true)) {
             $object->id = $value;
-            return $object;
         }
-
-        throw new ConfigurationException('Please provide writeable attribute id');
     }
 }
