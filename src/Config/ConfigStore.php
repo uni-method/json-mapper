@@ -58,8 +58,8 @@ class ConfigStore
     public function getEntityConfigByObject(object $object): EntityConfig
     {
         $filtered = array_values(
-            array_filter($this->entities, static function (EntityConfig $entity) use ($object) {
-                return $entity->class === get_class($object);
+            array_filter($this->entities, function (EntityConfig $entity) use ($object) {
+                return $entity->class === $this->getClassName($object);
             })
         );
         if (count($filtered) === 1) {
@@ -74,5 +74,14 @@ class ConfigStore
     public function getEntities(): array
     {
         return $this->entities;
+    }
+
+    /**
+     * @param object $object
+     * @return string
+     */
+    protected function getClassName(object $object): string
+    {
+        return get_class($object);
     }
 }
