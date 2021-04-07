@@ -175,21 +175,23 @@ class Serializer
             $type = $attributeConfig->type;
 
             $value = $this->getValue($obj, $attributeConfig->getter);
-            if ($type === Scalar::TYPE_STRING) {
-                $value = (string) $value;
-            } elseif ($type === Scalar::TYPE_INTEGER) {
-                $value = (int) $value;
-            }  elseif ($type === Scalar::TYPE_FLOAT) {
-                $value = (double) $value;
-            } elseif ($type === Scalar::TYPE_DATETIME) {
-                if ($value instanceof DateTime) {
-                    /** @var DateTime $value */
-                    $value = $value->format('c');
-                } else {
-                    $value = null;
+            if ($value !== null) {
+                if ($type === Scalar::TYPE_STRING) {
+                    $value = (string) $value;
+                } elseif ($type === Scalar::TYPE_INTEGER) {
+                    $value = (int) $value;
+                } elseif ($type === Scalar::TYPE_FLOAT) {
+                    $value = (double) $value;
+                } elseif ($type === Scalar::TYPE_DATETIME) {
+                    if ($value instanceof DateTime) {
+                        /** @var DateTime $value */
+                        $value = $value->format('c');
+                    } else {
+                        $value = null;
+                    }
+                } elseif ($type === Scalar::TYPE_BOOLEAN) {
+                    $value = (bool) $value;
                 }
-            } elseif ($type === Scalar::TYPE_BOOLEAN) {
-                $value = (bool) $value;
             }
             $result[$attributeConfig->name] = $value;
         }
