@@ -6,6 +6,7 @@ use UniMethod\JsonapiMapper\Config\AttributeConfig;
 use UniMethod\JsonapiMapper\Config\ConfigStore;
 use UniMethod\JsonapiMapper\Config\EntityConfig;
 use UniMethod\JsonapiMapper\Config\Event;
+use UniMethod\JsonapiMapper\Config\IdAttributeConfig;
 use UniMethod\JsonapiMapper\Config\RelationshipConfig;
 use UniMethod\JsonapiMapper\External\ConfigLoaderInterface;
 use UniMethod\JsonapiMapper\External\ContainerManagerInterface;
@@ -45,7 +46,13 @@ class YamlLoader implements ConfigLoaderInterface
             $attributes = [];
             $attributesRaw = $item['attributes'] ?? [];
             foreach ($attributesRaw as $internalType => $attribute) {
-                $attributes[] = new AttributeConfig($internalType, $attribute['type'], $attribute['setter'], $attribute['getter']);
+                if ($internalType === EntityConfig::DEFAULT_PRIMARY_ATTRIBUTE) {
+                    $entity->setId(
+                        new IdAttributeConfig($attribute['type'], $attribute['setter'], $attribute['getter'])
+                    );
+                } else {
+                    $attributes[] = new AttributeConfig($internalType, $attribute['type'], $attribute['setter'], $attribute['getter']);
+                }
             }
 
             $relationships = [];
