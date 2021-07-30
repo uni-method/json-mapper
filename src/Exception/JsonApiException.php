@@ -4,7 +4,7 @@ namespace UniMethod\JsonapiMapper\Exception;
 
 use Exception;
 
-class BrokenInputException extends Exception
+class JsonApiException extends Exception
 {
 
 }

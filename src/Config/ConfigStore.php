@@ -23,12 +23,14 @@ class ConfigStore
     {
         $filtered = array_values(
             array_filter($this->entities, static function (EntityConfig $entity) use ($alias) {
-                return $entity->alias === $alias;
+                return $entity->getAlias() === $alias;
             })
         );
+
         if (count($filtered) === 1) {
             return $filtered[0];
         }
+
         throw new ConfigurationException('There are no configuration for this type');
     }
 
@@ -41,7 +43,7 @@ class ConfigStore
     {
         $filtered = array_values(
             array_filter($this->entities, static function (EntityConfig $entity) use ($class) {
-                return $entity->class === $class;
+                return $entity->getClass() === $class;
             })
         );
         if (count($filtered) === 1) {
@@ -59,7 +61,7 @@ class ConfigStore
     {
         $filtered = array_values(
             array_filter($this->entities, function (EntityConfig $entity) use ($object) {
-                return $entity->class === $this->getClassName($object);
+                return $entity->getClass() === $this->getClassName($object);
             })
         );
         if (count($filtered) === 1) {

@@ -10,6 +10,7 @@ use UniMethod\JsonapiMapper\Config\AttributeConfig;
 use UniMethod\JsonapiMapper\Config\ConfigStore;
 use UniMethod\JsonapiMapper\Config\EntityConfig;
 use Tests\Auxiliary\YamlLoader;
+use UniMethod\JsonapiMapper\Config\IdAttributeConfig;
 use UniMethod\JsonapiMapper\External\ContainerManagerInterface;
 use UniMethod\JsonapiMapper\Service\Serializer;
 use PHPUnit\Framework\TestCase;
@@ -21,11 +22,13 @@ class SerializeTest extends TestCase
     {
         $entity = (new EntityConfig())
             ->setClass(Dummy::class)
+            ->setId(
+                new AttributeConfig('id', 'string', null, 'getTwo()')
+            )
             ->setAlias('dummy23')
             ->setDescription('Dummy class for example')
             ->setAttributes([
                 new AttributeConfig('testOne', 'integer', null, 'one'),
-                new AttributeConfig('id', 'string', null, 'getTwo()'),
             ])
         ;
         $config = new ConfigStore([$entity]);
@@ -66,9 +69,11 @@ class SerializeTest extends TestCase
         $entity = (new EntityConfig())
             ->setClass(Dummy::class)
             ->setAlias('dummy23')
+            ->setId(
+                new IdAttributeConfig('integer', null, 'one')
+            )
             ->setDescription('Dummy class for example')
             ->setAttributes([
-                new AttributeConfig('testOne', 'integer', null, 'one'),
                 new AttributeConfig('id', 'string', null, 'getTwo()'),
             ])
         ;
@@ -84,7 +89,7 @@ class SerializeTest extends TestCase
         $service = new Serializer($config);
         self::assertEquals(
             json_encode($service->handleCollection([$dummy, $dummy2]), JSON_THROW_ON_ERROR, 512),
-            '{"data":[{"type":"dummy23","id":"wow","attributes":{"testOne":5},"relationships":[]},{"type":"dummy23","id":"woww2","attributes":{"testOne":15},"relationships":[]}],"included":[]}'
+            '{"data":[{"type":"dummy23","id":"5","attributes":{"id":"wow"},"relationships":[]},{"type":"dummy23","id":"15","attributes":{"id":"woww2"},"relationships":[]}],"included":[]}'
         );
     }
 }

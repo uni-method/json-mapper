@@ -2,8 +2,6 @@
 
 namespace UniMethod\JsonapiMapper\Config;
 
-use UniMethod\JsonapiMapper\Exception\ConfigurationException;
-
 trait MethodHelper
 {
     /**
@@ -27,7 +25,7 @@ trait MethodHelper
     /**
      * @param object $object
      * @param string $prop
-     * @return object
+     * @return mixed
      */
     protected function getValue(object $object, string $prop)
     {
@@ -37,38 +35,5 @@ trait MethodHelper
             $value = $object->$prop;
         }
         return $value;
-    }
-
-    /**
-     * @param object $object
-     * @param string $prop
-     * @param mixed $value
-     * @return object
-     */
-    protected function setValue(object $object, string $prop, $value): object
-    {
-        if ($this->isMethod($prop)) {
-            $object->{$this->getMethod($prop)}($value);
-        } else {
-            $object->$prop = $value;
-        }
-        return $object;
-    }
-
-    /**
-     * @param object $object
-     * @param $value
-     * @return void
-     */
-    protected function setId(object $object, $value): void
-    {
-        $hasMethod = method_exists($object, 'setId');
-        if ($hasMethod) {
-            $object->setId($value);
-        }
-
-        if (in_array('id', get_object_vars($object), true)) {
-            $object->id = $value;
-        }
     }
 }
